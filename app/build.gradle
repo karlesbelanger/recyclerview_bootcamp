@@ -42,4 +42,8 @@ dependencies {
     compile ('com.vmn.android:vmn-video-player-bento:2.1.2@aar') {
         transitive = true } // Optional: for Bento integration
     compile 'com.vmn.bento:bento-android:3.0.5' // Optional: for Bento integration
+
+//    compile('com.crashlytics.sdk.android:crashlytics:2.1.2@aar') {
+//        transitive = true;
+//    }
 }

@@ -1,7 +1,7 @@
 package com.example.scrollinglist;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
@@ -11,7 +11,6 @@ import android.widget.Toast;
 import com.example.scrollinglist.pojo.Episode;
 import com.example.scrollinglist.pojo.EpisodeResponse;
 
-import java.util.ArrayList;
 import java.util.List;
 
 
