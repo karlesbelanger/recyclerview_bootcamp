@@ -1,0 +1,191 @@
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<LinearLayout
+xmlns:android="http://schemas.android.com/apk/res/android"-->
+<!--android:orientation="vertical"
+android:layout_width="match_parent"-->
+<!--android:layout_height="match_parent">-->
+<!--</LinearLayout>-->
+<!-- This is the container representing the player. The player draws
+into the background of this view. It behaves
+like a RelativeLayout, with the exception that WRAP_CONTENT layout
+rules take their size from the video itself,
+and not from their children. Children are not able to 'stretch'
+this view by specifying MATCH_PARENT; instead,
+MATCH_PARENT children will match the size of this view, as you
+often want for overlays atop a playing video. -->
+<com.vmn.android.player.view.VideoSurfaceView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:custom="http://schemas.android.com/apk/res-auto"
+    android:id="@id/video_player"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_centerHorizontal="true"
+    custom:keep_aspect_ratio="true">
+    <!-- This is the container into which server-positioned overlays are
+   placed. It sits below all other visual
+   controls, and they should never be visible when ads are on-screen
+   (therefore also under the ad frame).
+   This control has to be of type PercentFrameLayout, because child
+   elements are generated using that
+   Expand
+   source
+   Expand
+   source
+   1.
+   a.
+   class' layout parameters. -->
+    <android.support.percent.PercentFrameLayout
+        android:id="@id/mediagen_overlay_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <!-- This is the target that Freewheel ads draw into. Should be GONE by
+   default, and sized to fill the player's
+   container so as to hide the player underneath it. -->
+    <FrameLayout
+        android:id="@id/fw_ad_frame"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+    <!-- This is the container the captions render into. The FCC specified
+   root rectangle sits within this box.
+   FCC regulations indicate that controls may not occlude captions, so
+   this box has to properly reshape
+   itself to avoid media controls. -->
+    <FrameLayout
+        android:id="@id/captions_root"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/controls_root"
+        android:layout_alignParentTop="true"
+        android:layout_alignWithParentIfMissing="true" />
+    <!-- Contains all views bound to the media controls. When media controls
+   are not showing, this is GONE; when
+   they are showing, this is VISIBLE. Put other things to be controlled
+   by the same user actions into this
+   container. -->
+    <LinearLayout
+        android:id="@id/controls_root"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:orientation="vertical"
+        android:visibility="gone">
+        <!-- This includes the standard provided media controls. You can
+       provide your own media controls, as long as
+       the IDs of the appropriate controls match the ones in here. Any
+       control that isn't needed can be omitted. -->
+        <include layout="@layout/media_controls" />
+    </LinearLayout>
+    <!-- This intercepts all touch events for media controls and other
+   interested parties. Listeners should not
+   consume the touch event, but let it propagate to controls beneath this
+   surface. -->
+    <View
+        android:id="@id/controls_touch_pane"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+    <!-- This bar represents the ad's associated detail view, if desired. It
+   should be GONE by default. When
+   visible it attaches to the top of the regular media controls. This is
+   above the controls' touch pane so
+   that touch events consumed by controls in this region don't trigger
+   1.
+   a.
+   media control visibility. -->
+    <LinearLayout
+        android:id="@id/fw_controls_addon"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_above="@id/controls_root"
+        android:layout_alignWithParentIfMissing="true"
+        android:background="@color/vmn_semi_transparent"
+        android:orientation="horizontal"
+        android:padding="5dp"
+        android:visibility="gone">
+        <!-- This text field receives the ad's remaining time count. -->
+        <TextView
+            android:id="@id/fw_time_remaining"
+            android:layout_width="0px"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:textColor="#D7D7D7"
+            android:textSize="12sp" />
+        <!-- This view gets a touch handler that activates the ad's associated
+       URL. -->
+        <Button
+            android:id="@id/fw_learn_more"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="@color/vmn_semi_transparent"
+            android:padding="10dp"
+            android:text="@string/freewheel_learn_more_text"
+            android:textColor="#D7D7D7"
+            android:textSize="12sp" />
+    </LinearLayout>
+    <!-- This container holds closed captions popup menu. Closed caption popup
+   is put into a container to make
+   the outer area semi-transparent. GONE by default and when it is
+   visible, it is attached to video player view. -->
+    <FrameLayout
+        android:id="@id/vmn_caption_dialog_container"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:background="@color/semi_transparent_grey_background"
+        android:visibility="gone">
+        <include
+            android:id="@id/vmn_caption_dialog"
+            layout="@layout/vmn_caption_dialog"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical|center_horizontal" />
+    </FrameLayout>
+    <!-- This is a standard advanced style menu for captions. GONE by default
+   and made visible when advanced options
+   in the closed caption popup clicked. -->
+    <include
+        android:id="@id/caption_style_config"
+        layout="@layout/caption_style_config"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:visibility="gone" />
+    1.
+    a.
+    <LinearLayout
+        style="@style/GenericProgressBackground">
+        <ProgressBar
+            android:id="@id/loading_panel"
+            style="@style/GenericProgressIndicator"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:visibility="gone" />
+    </LinearLayout>
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <TextView
+            android:id="@id/error_slate"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:background="@color/black"
+            android:gravity="center"
+            android:text=""
+            android:visibility="gone" />
+        1.
+        a.
+        2.
+        a.
+        3.
+        a.
+    </FrameLayout>
+</com.vmn.android.player.view.VideoSurfaceView>
+
+
+<!--<?xml version="1.0" encoding="utf-8"?>-->
+<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
+    <!--android:orientation="vertical" android:layout_width="match_parent"-->
+    <!--android:layout_height="match_parent">-->
+
+<!--</LinearLayout>-->
