@@ -24,10 +24,10 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
     private static Context mContext;
 
 
-    private static String mStringMGID;
 
 
-    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+    public static class ViewHolder extends RecyclerView.ViewHolder{
 
         private final TextView textViewTitle;
         private final TextView textViewDescription;
@@ -35,6 +35,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
         private final TextView textViewRating;
         private final TextView textViewRatingType;
         private final TextView textViewGenre;
+        private String mStringMGID;
 
         private final ImageView imageView;
 
@@ -56,11 +57,15 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
             textViewDescription = (TextView) itemView.findViewById(R.id.r_description);
             textViewDuration    = (TextView) itemView.findViewById(R.id.r_time);
             textViewRating      = (TextView) itemView.findViewById(R.id.r_rating);
-            textViewRatingType     = (TextView) itemView.findViewById(R.id.r_rating_type);
+            textViewRatingType  = (TextView) itemView.findViewById(R.id.r_rating_type);
             textViewGenre       = (TextView) itemView.findViewById(R.id.r_genre);
 
-            imageView       = (ImageView) itemView.findViewById(R.id.r_image);
+            imageView           = (ImageView) itemView.findViewById(R.id.r_image);
 
+        }
+
+        public void setStringMGID(String stringMGID){
+            this.mStringMGID = stringMGID;
         }
     }
 
@@ -81,7 +86,7 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
     public void onBindViewHolder(EpisodeAdapter.ViewHolder holder, int position) {
         Episode episode = mArrayList.get(position);
 
-        mStringMGID = episode.getMgid();
+        holder.setStringMGID(episode.getMgid());
         TextView textViewTitle       = holder.textViewTitle;
         TextView textViewDescription = holder.textViewDescription;
         TextView textViewDuration    = holder.textViewDuration;

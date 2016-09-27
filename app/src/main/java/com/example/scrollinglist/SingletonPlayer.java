@@ -81,6 +81,7 @@ public class SingletonPlayer {
         MediaControlsPlugin.bindPlugin(androidPlayerContext);
         BentoPlugin.bindPlugin(androidPlayerContext);
 
+
         // Check the source for this plugin to see detailed information on how to create a plugin.
         DemoPlugin.bindPlugin(androidPlayerContext);
     }

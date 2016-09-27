@@ -19,6 +19,8 @@ import com.vmn.android.player.model.MGID;
 import com.vmn.android.player.model.VMNContentSession;
 import com.vmn.android.player.view.VideoSurfaceView;
 import com.vmn.functional.Optional;
+import com.vmn.log.PLog;
+import com.vmn.util.Diagnostics;
 
 import java.net.URI;
 
@@ -46,25 +48,23 @@ public class EpisodePlayer extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.episode_player);
-        videoPlayerView = (VideoSurfaceView)findViewById(R.id.video_player);
+        videoPlayerView = (VideoSurfaceView) findViewById(R.id.video_player);
 
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
-            if(extras == null) {
-                mStringMGID= null;
+            if (extras == null) {
+                mStringMGID = null;
             } else {
                 mStringMGID = extras.getString("MGIDString");
                 episodeMGID = MGID.make(mStringMGID);
                 appName = getAppName(mStringMGID);
             }
         } else {
-            mStringMGID=  savedInstanceState.getString(MGID_STRING);
+            mStringMGID = savedInstanceState.getString(MGID_STRING);
             Log.d(TAG, "onCreate: " + mStringMGID);
             episodeMGID = MGID.make(mStringMGID);
             appName = getAppName(mStringMGID);
         }
-
-
 
 
         singleton = SingletonPlayer.getInstance();
@@ -80,21 +80,41 @@ public class EpisodePlayer extends AppCompatActivity {
                 savedInstanceState.getSerializable(PLAYER_SESSION_KEY); //Optional: used for saving state
         else session = playerContext.buildSession(episodeMGID, appName,
                 false).authRequired(false).build(); //authRequired is false because we are only
-        //viewing the free clips, as opposed to those requiring an account
-        videoPlayer.clear();
-        videoPlayer.enqueue(playerContext.prepareSession(session)); // Use the Freewheel plugin to receive ad clickthroughs.
 
-
-        final Optional<FreewheelPlugin> freewheelPlugin = playerContext.findPlugin(FreewheelPlugin.class);
+        final Optional<FreewheelPlugin> freewheelPlugin =
+                playerContext.findPlugin(FreewheelPlugin.class);
         if (freewheelPlugin.isPresent()) {
-            final Optional<FreewheelPluginController> freewheelPluginController = freewheelPlugin.get().interfaceFor(videoPlayer);
+            final Optional<FreewheelPluginController> freewheelPluginController =
+                    freewheelPlugin.get().interfaceFor(videoPlayer);
+            freewheelPlugin.get().getAdHolidayCounter().endAdHoliday(); //This can help force the mid-video "commercial break" ads to play
             freewheelPluginController.get().registerDelegate(new FreewheelPluginController.DelegateBase() {
                 @Override
-                public void instanceClickthroughTriggered(FWAdSlot slot, IAdInstance instance, URI uri) {
+                public void instanceClickthroughTriggered(FWAdSlot slot, IAdInstance instance,
+                                                          URI uri) {
                     startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri.toString())));
                 }
             });
+            freewheelPluginController.get().registerDelegate(Diagnostics.loggingProxy(FreewheelPluginController.Delegate.class, PLog.VERBOSE)); //Optional: causes the ad player to log
+            //// diagnostic information which can be helpful in seeing if it works or not
+
         }
+
+
+        //viewing the free clips, as opposed to those requiring an account
+//        videoPlayer.clear();
+//        videoPlayer.enqueue(playerContext.prepareSession(session)); // Use the Freewheel plugin to receive ad clickthroughs.
+
+
+//        final Optional<FreewheelPlugin> freewheelPlugin = playerContext.findPlugin(FreewheelPlugin.class);
+//        if (freewheelPlugin.isPresent()) {
+//            final Optional<FreewheelPluginController> freewheelPluginController = freewheelPlugin.get().interfaceFor(videoPlayer);
+//            freewheelPluginController.get().registerDelegate(new FreewheelPluginController.DelegateBase() {
+//                @Override
+//                public void instanceClickthroughTriggered(FWAdSlot slot, IAdInstance instance, URI uri) {
+//                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri.toString())));
+//                }
+//            });
+//        }
 
 
         // Provide a reference to the base view that contains all the player visual components.  The player and its
@@ -105,10 +125,12 @@ public class EpisodePlayer extends AppCompatActivity {
 
         // Collect the session that is to be started from either the bundle or the Intent (the latter comes from
         // DemoSelector.java; the former from `onSaveInstanceState` of prior versions of this Activity).
-        if (savedInstanceState != null) session = (VMNContentSession) savedInstanceState.getSerializable(PLAYER_SESSION_KEY);
-        if (session == null) session = (VMNContentSession)getIntent().getSerializableExtra(PLAYER_SESSION_KEY);
+        if (savedInstanceState != null)
+            session = (VMNContentSession) savedInstanceState.getSerializable(PLAYER_SESSION_KEY);
+        if (session == null)
+            session = (VMNContentSession) getIntent().getSerializableExtra(PLAYER_SESSION_KEY);
         if (session == null) {
-            Log.e("DemoPlayerActivity", "Failed to load session from Bundle or Intent");
+            Log.e("EpisodePlayer", "Failed to load session from Bundle or Intent");
             finish();
         }
 
@@ -132,25 +154,24 @@ public class EpisodePlayer extends AppCompatActivity {
     @Override
     protected void onStart() {
         super.onStart();
-        videoPlayer.setPlayWhenReady(true);
     }
 
     /* Include the following function somewhere within your class. */
     private String getAppName(String mgidString) {
         String appName;
-        if(mgidString.contains("mtv")){
+        if (mgidString.contains("mtv")) {
             appName = "MTV_App_Android";
-        } else if(mgidString.contains("spike")){
+        } else if (mgidString.contains("spike")) {
             appName = "Spike_TVE_App_Android";
-        } else if(mgidString.contains("comedycentral")){
+        } else if (mgidString.contains("comedycentral")) {
             appName = "CC_TVE_App_Android_App";
-        } else if(mgidString.contains("nickjr")){
+        } else if (mgidString.contains("nickjr")) {
             appName = "CasNickJrApp_Staging";
-        } else if(mgidString.contains("nick.com")){
+        } else if (mgidString.contains("nick.com")) {
             appName = "Nick_App_Android_Phone";
-        } else if(mgidString.contains("vh1")){
+        } else if (mgidString.contains("vh1")) {
             appName = "VH1_App_Android";
-        } else if(mgidString.contains("bet")){
+        } else if (mgidString.contains("bet")) {
             appName = "BET_App_Android";
         } else {
 //default
