@@ -1,6 +1,7 @@
 package com.example.scrollinglist;
 
 import com.example.scrollinglist.video.DemoPlugin;
+import com.vmn.android.bento.Bento;
 import com.vmn.android.freewheel.impl.FreewheelPlugin;
 import com.vmn.android.player.AndroidPlayerContext;
 import com.vmn.android.player.api.PreparedContentItem;
@@ -73,6 +74,8 @@ public class SingletonPlayer {
             }
         });
 
+
+        Bento.setPlayerContext(androidPlayerContext);
 
         // Link all plugins that each player instance will use
         CaptionsPlugin.bindPlugin(androidPlayerContext);

@@ -6,9 +6,9 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.View;
 
+import com.vmn.android.bento.facade.Facade;
 import com.vmn.android.freewheel.FreewheelPluginController;
 import com.vmn.android.freewheel.impl.FWAdSlot;
 import com.vmn.android.freewheel.impl.FreewheelPlugin;
@@ -61,7 +61,7 @@ public class EpisodePlayer extends AppCompatActivity {
             }
         } else {
             mStringMGID = savedInstanceState.getString(MGID_STRING);
-            Log.d(TAG, "onCreate: " + mStringMGID);
+            //Log.d(TAG, "onCreate: " + mStringMGID);
             episodeMGID = MGID.make(mStringMGID);
             appName = getAppName(mStringMGID);
         }
@@ -69,6 +69,8 @@ public class EpisodePlayer extends AppCompatActivity {
 
         singleton = SingletonPlayer.getInstance();
         playerContext = singleton.getPlayerContext();
+
+        Facade.getInstance().setActivity(this);
 
         videoPlayer = playerContext.buildPlayer()
                 .autoPlay(true) // true iff each loaded video should start playing immediately regardless of prior player state
@@ -81,9 +83,22 @@ public class EpisodePlayer extends AppCompatActivity {
         else session = playerContext.buildSession(episodeMGID, appName,
                 false).authRequired(false).build(); //authRequired is false because we are only
 
+        // Provide a reference to the base view that contains all the player visual components.  The player and its
+        // various plugins will look for specific IDs within this view, and hook them up to specific functional elements.
+        // The player wants to draw into an instance of VMNPlayerView with ID R.id.video_player, and so on.
+        // Check res/layout/demo_player.xml for an example of how a typical player layout will work.
+        videoPlayer.setView(Optional.<View>of(videoPlayerView));
+
+        
         final Optional<FreewheelPlugin> freewheelPlugin =
                 playerContext.findPlugin(FreewheelPlugin.class);
         if (freewheelPlugin.isPresent()) {
+            // do i have to close emulator each time??
+
+
+            //change to mtv?
+
+            
             final Optional<FreewheelPluginController> freewheelPluginController =
                     freewheelPlugin.get().interfaceFor(videoPlayer);
             freewheelPlugin.get().getAdHolidayCounter().endAdHoliday(); //This can help force the mid-video "commercial break" ads to play
@@ -96,7 +111,6 @@ public class EpisodePlayer extends AppCompatActivity {
             });
             freewheelPluginController.get().registerDelegate(Diagnostics.loggingProxy(FreewheelPluginController.Delegate.class, PLog.VERBOSE)); //Optional: causes the ad player to log
             //// diagnostic information which can be helpful in seeing if it works or not
-
         }
 
 
@@ -117,11 +131,7 @@ public class EpisodePlayer extends AppCompatActivity {
 //        }
 
 
-        // Provide a reference to the base view that contains all the player visual components.  The player and its
-        // various plugins will look for specific IDs within this view, and hook them up to specific functional elements.
-        // The player wants to draw into an instance of VMNPlayerView with ID R.id.video_player, and so on.
-        // Check res/layout/demo_player.xml for an example of how a typical player layout will work.
-        videoPlayer.setView(Optional.<View>of(videoPlayerView));
+
 
         // Collect the session that is to be started from either the bundle or the Intent (the latter comes from
         // DemoSelector.java; the former from `onSaveInstanceState` of prior versions of this Activity).
@@ -130,7 +140,7 @@ public class EpisodePlayer extends AppCompatActivity {
         if (session == null)
             session = (VMNContentSession) getIntent().getSerializableExtra(PLAYER_SESSION_KEY);
         if (session == null) {
-            Log.e("EpisodePlayer", "Failed to load session from Bundle or Intent");
+            //Log.e("EpisodePlayer", "Failed to load session from Bundle or Intent");
             finish();
         }
 

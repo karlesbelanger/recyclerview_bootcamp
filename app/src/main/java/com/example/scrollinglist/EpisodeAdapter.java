@@ -45,9 +45,6 @@ public class EpisodeAdapter extends RecyclerView.Adapter<EpisodeAdapter.ViewHold
             itemView.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View view) {
-                    /****************
-                     * To do
-                     */
                     Intent intent = new Intent(mContext, EpisodePlayer.class);
                     intent.putExtra("MGIDString", mStringMGID);
                     mContext.startActivity(intent);
