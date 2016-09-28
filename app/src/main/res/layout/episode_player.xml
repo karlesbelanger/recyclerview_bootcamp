@@ -10,6 +10,7 @@
         app:layout_scrollFlags="scroll|enterAlways"
         app:titleTextColor="@color/hyperlinkBlue"
         app:title="Episodes"
+        android:clipChildren="true"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
     <include layout="@layout/video_player_view"
         android:layout_width="match_parent"

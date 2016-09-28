@@ -1,5 +1,6 @@
 package com.example.scrollinglist;
 
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +12,7 @@ import android.widget.Toast;
 
 import com.example.scrollinglist.pojo.Episode;
 import com.example.scrollinglist.pojo.EpisodeResponse;
+import com.example.scrollinglist.tve.LoginActivity;
 import com.example.scrollinglist.tve.TVEDelegate;
 import com.example.scrollinglist.video.EpisodeAdapter;
 import com.example.scrollinglist.video.EpisodesListener;
@@ -51,32 +53,7 @@ public class MainActivity extends AppCompatActivity implements EpisodesListener,
         setContentView(R.layout.activity_main);
         tve = TVEDelegate.getInstance();
 
-        mToolbar = (Toolbar) findViewById(R.id.a_main_toolbar);
-        setSupportActionBar(mToolbar);
-/*
-        if (true) {
-            mToolbar.setNavigationIcon(R.drawable.back);
-            mToolbar.setNavigationOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onBackPressed();
-                }
-            });
-        }
 
-
-        if (mToolbar != null) {
-            setSupportActionBar(mToolbar);
-            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        }
-
-        setUpNavigationDrawer();
-
-        getFragmentManager().addOnBackStackChangedListener(backStackListener); // listen to the backstack of the fragment manager
-*/
-
-        new RetrofitVid(this)
-                .getEpisodes(API_KEY);
 
     }
 
@@ -89,18 +66,13 @@ public class MainActivity extends AppCompatActivity implements EpisodesListener,
         }
     }
 
+
     @Override
     protected void onStart() {
         super.onStart();
-//        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
-//        startActivity(intent);
-//        if (isUserLoggedIn()) {
-//
-//            new RetrofitVid(this)
-//                    .getEpisodes(API_KEY);
-//        }
+        Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+        startActivity(intent);
     }
-
     @Override
     protected void onPause() {
         super.onPause();
@@ -139,10 +111,16 @@ public class MainActivity extends AppCompatActivity implements EpisodesListener,
 
     @Override
     public void loginFormPrepared(Fragment tveFragment) {
-    }
 
-    @Override
+    }
+    @Override//
     public void loginCompleted(TVESubscriber subscriber) {
+        if (isUserLoggedIn()) {
+            new RetrofitVid(this)
+                    .getEpisodes(API_KEY);
+            mToolbar = (Toolbar) findViewById(R.id.a_main_toolbar);
+            setSupportActionBar(mToolbar);
+        }
     }
 
     @Override
@@ -184,24 +162,5 @@ public class MainActivity extends AppCompatActivity implements EpisodesListener,
 
     }
 
-  /*  protected void setNavIcon() {
-        int backStackEntryCount = getFragmentManager().getBackStackEntryCount();
-        drawerToggle.setDrawerIndicatorEnabled(backStackEntryCount == 0);
-    }
-    public boolean onOptionsItemSelected(MenuItem item) {
-        if (drawerToggle.isDrawerIndicatorEnabled() && drawerToggle.onOptionsItemSelected(item)) {
-            return true;
-        }
 
-        switch (item.getItemId()) {
-            case x:
-                return true;
-            default:
-                return false;
-        }
-    }
-    public boolean onSupportNavigateUp() {
-        onBackPressed();
-        return true;
-    }*/
 }
