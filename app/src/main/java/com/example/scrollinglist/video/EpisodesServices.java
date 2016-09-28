@@ -1,10 +1,6 @@
-package com.example.scrollinglist;
+package com.example.scrollinglist.video;
 
-import com.example.scrollinglist.pojo.Episode;
 import com.example.scrollinglist.pojo.EpisodeResponse;
-
-import java.util.ArrayList;
-import java.util.List;
 
 import retrofit2.Call;
 import retrofit2.http.GET;

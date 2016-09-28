@@ -44,7 +44,4 @@ dependencies {
     compile 'com.vmn.bento:bento-android:3.0.5' // Optional: for Bento integration
     compile 'com.vmn.android:tveauthcomponent:4.5.3'
 
-//    compile('com.crashlytics.sdk.android:crashlytics:2.1.2@aar') {
-//        transitive = true;
-//    }
 }

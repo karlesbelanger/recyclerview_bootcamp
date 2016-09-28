@@ -1,4 +1,4 @@
-package com.example.scrollinglist;
+package com.example.scrollinglist.video;
 
 import android.content.Context;
 import android.content.Intent;
@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.bumptech.glide.Glide;
+import com.example.scrollinglist.R;
 import com.example.scrollinglist.pojo.Episode;
 
 import java.util.List;

@@ -1,4 +1,4 @@
-package com.example.scrollinglist;
+package com.example.scrollinglist.video;
 
 import android.content.Intent;
 import android.net.Uri;
@@ -6,8 +6,12 @@ import android.os.Bundle;
 import android.os.Looper;
 import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
+import android.util.Log;
+import android.view.MenuItem;
 import android.view.View;
 
+import com.example.scrollinglist.R;
 import com.vmn.android.bento.facade.Facade;
 import com.vmn.android.freewheel.FreewheelPluginController;
 import com.vmn.android.freewheel.impl.FWAdSlot;
@@ -33,6 +37,7 @@ public class EpisodePlayer extends AppCompatActivity {
     private String appName;
     private static final int MAX_BUFFER_SIZE_MEGS = 32;
     static final String MGID_STRING = "mgid_string";
+    private Toolbar mToolbar;
     @NonNull
     private SingletonPlayer singleton;
     public static final String PLAYER_SESSION_KEY = "playerSession"; /*Optional: used to
@@ -50,6 +55,10 @@ public class EpisodePlayer extends AppCompatActivity {
         setContentView(R.layout.episode_player);
         videoPlayerView = (VideoSurfaceView) findViewById(R.id.video_player);
 
+        mToolbar = (Toolbar) findViewById(R.id.episode_player_toolbar);
+        setSupportActionBar(mToolbar);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         if (savedInstanceState == null) {
             Bundle extras = getIntent().getExtras();
             if (extras == null) {
@@ -61,7 +70,6 @@ public class EpisodePlayer extends AppCompatActivity {
             }
         } else {
             mStringMGID = savedInstanceState.getString(MGID_STRING);
-            //Log.d(TAG, "onCreate: " + mStringMGID);
             episodeMGID = MGID.make(mStringMGID);
             appName = getAppName(mStringMGID);
         }
@@ -89,16 +97,10 @@ public class EpisodePlayer extends AppCompatActivity {
         // Check res/layout/demo_player.xml for an example of how a typical player layout will work.
         videoPlayer.setView(Optional.<View>of(videoPlayerView));
 
-        
+
         final Optional<FreewheelPlugin> freewheelPlugin =
                 playerContext.findPlugin(FreewheelPlugin.class);
         if (freewheelPlugin.isPresent()) {
-            // do i have to close emulator each time??
-
-
-            //change to mtv?
-
-            
             final Optional<FreewheelPluginController> freewheelPluginController =
                     freewheelPlugin.get().interfaceFor(videoPlayer);
             freewheelPlugin.get().getAdHolidayCounter().endAdHoliday(); //This can help force the mid-video "commercial break" ads to play
@@ -114,25 +116,6 @@ public class EpisodePlayer extends AppCompatActivity {
         }
 
 
-        //viewing the free clips, as opposed to those requiring an account
-//        videoPlayer.clear();
-//        videoPlayer.enqueue(playerContext.prepareSession(session)); // Use the Freewheel plugin to receive ad clickthroughs.
-
-
-//        final Optional<FreewheelPlugin> freewheelPlugin = playerContext.findPlugin(FreewheelPlugin.class);
-//        if (freewheelPlugin.isPresent()) {
-//            final Optional<FreewheelPluginController> freewheelPluginController = freewheelPlugin.get().interfaceFor(videoPlayer);
-//            freewheelPluginController.get().registerDelegate(new FreewheelPluginController.DelegateBase() {
-//                @Override
-//                public void instanceClickthroughTriggered(FWAdSlot slot, IAdInstance instance, URI uri) {
-//                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse(uri.toString())));
-//                }
-//            });
-//        }
-
-
-
-
         // Collect the session that is to be started from either the bundle or the Intent (the latter comes from
         // DemoSelector.java; the former from `onSaveInstanceState` of prior versions of this Activity).
         if (savedInstanceState != null)
@@ -140,7 +123,7 @@ public class EpisodePlayer extends AppCompatActivity {
         if (session == null)
             session = (VMNContentSession) getIntent().getSerializableExtra(PLAYER_SESSION_KEY);
         if (session == null) {
-            //Log.e("EpisodePlayer", "Failed to load session from Bundle or Intent");
+            Log.e("EpisodePlayer", "Failed to load session from Bundle or Intent");
             finish();
         }
 
@@ -153,14 +136,23 @@ public class EpisodePlayer extends AppCompatActivity {
                 : playerContext.prepareSession(session));
 
         // Check this class for some specific enhancements and custom ways of using the player.
-        //final DemoExtensions demoExtensions = new DemoExtensions(videoPlayer);
+        //final EpisodeExtension demoExtensions = new EpisodeExtension(videoPlayer);
 
         // At this point, your video should be playing.  Any time spent by the user between looking at the selector
         // screen and loading a video will be used to prepare content, so video playback should be quite responsive.
         // Note however that we are contractually prevented from preparing Freewheel content in advance, so if prerolls
         // are in use there will be a minimum startup delay defined by the response time of the preroll slot.
     }
-
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                onBackPressed();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
     @Override
     protected void onStart() {
         super.onStart();
@@ -199,8 +191,9 @@ public class EpisodePlayer extends AppCompatActivity {
     @Override
     protected void onSaveInstanceState(Bundle outState) {
         //Log.d(TAG, "onRestoreInstanceState: " + mStringMGID);
+        final Optional<VMNContentSession> state = videoPlayer.getPlaybackState();
+        if (state.isPresent()) outState.putSerializable(PLAYER_SESSION_KEY, state.get());
         outState.putString(MGID_STRING, mStringMGID);
-        outState.putSerializable(PLAYER_SESSION_KEY, session);
         super.onSaveInstanceState(outState);
     }
 

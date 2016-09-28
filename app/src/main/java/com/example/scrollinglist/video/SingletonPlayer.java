@@ -1,6 +1,9 @@
 package com.example.scrollinglist.video;
 
+import android.util.Log;
+
 import com.example.scrollinglist.MainApplication;
+import com.vmn.android.bento.Bento;
 import com.vmn.android.freewheel.impl.FreewheelPlugin;
 import com.vmn.android.player.AndroidPlayerContext;
 import com.vmn.android.player.api.PreparedContentItem;
@@ -14,13 +17,17 @@ import com.vmn.util.PlayerException;
 
 import java.util.HashMap;
 import java.util.Map;
+
+
 /**
  * Created by belangek on 9/26/16.
  */
 
-public class DemoSingleton {
-    private static final DemoSingleton instance = new DemoSingleton();
-    public static DemoSingleton getInstance() { return instance; }
+public class SingletonPlayer {
+    private static final SingletonPlayer instance = new SingletonPlayer();
+    private static final String TAG = SingletonPlayer.class.getSimpleName();
+
+    public static SingletonPlayer getInstance() { return instance; }
 
 
     // Define a location to store prepared items. The session makes a good key for this map.
@@ -50,8 +57,8 @@ public class DemoSingleton {
     private final AndroidPlayerContext androidPlayerContext = new AndroidPlayerContext(
             MainApplication.getInstance(),
             "demoAdvertisingId");//,
-            //MainApplication.getInstance().getTveService().getAuthBridge(),
-            //MAX_BUFFER_SIZE_MEGS);
+    //MainApplication.getInstance().getTveService().getAuthBridge(),
+    //MAX_BUFFER_SIZE_MEGS);
 
     public AndroidPlayerContext getPlayerContext() { return androidPlayerContext; }
 
@@ -62,23 +69,24 @@ public class DemoSingleton {
 
     // For each optional player module you would like to use, invoke bindPlugin() on it, passing in the appropriate
     // configuration options to each.
-    private DemoSingleton() {
+    private SingletonPlayer() {
         // Any time a trapped exception happens through the player, notify Crashlytics.
         androidPlayerContext.getErrorHandler().registerDelegate(new ErrorHandler.Delegate() {
             @Override
             public void exceptionOccurred(PlayerException exception) {
-                //Crashlytics.logException(exception);
+                Log.e(TAG, "exceptionOccurred: ", exception );
             }
         });
 
 
+        Bento.setPlayerContext(androidPlayerContext);
+
         // Link all plugins that each player instance will use
         CaptionsPlugin.bindPlugin(androidPlayerContext);
-        FreewheelPlugin.bindPlugin(androidPlayerContext, FreewheelPlugin.HandleClicks.APPLICATION, skipPreroll);
+        FreewheelPlugin.bindPlugin(androidPlayerContext,
+                FreewheelPlugin.HandleClicks.APPLICATION, skipPreroll);
         MediaControlsPlugin.bindPlugin(androidPlayerContext);
         BentoPlugin.bindPlugin(androidPlayerContext);
 
-        // Check the source for this plugin to see detailed information on how to create a plugin.
-        DemoPlugin.bindPlugin(androidPlayerContext);
     }
 }

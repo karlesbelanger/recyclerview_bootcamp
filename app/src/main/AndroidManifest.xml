@@ -30,7 +30,7 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".EpisodePlayer" />
+        <activity android:name=".video.EpisodePlayer" />
         <activity android:name=".tve.LoginActivity"></activity>
     </application>
 

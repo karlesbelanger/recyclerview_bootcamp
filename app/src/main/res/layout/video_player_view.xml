@@ -27,10 +27,6 @@ often want for overlays atop a playing video. -->
    (therefore also under the ad frame).
    This control has to be of type PercentFrameLayout, because child
    elements are generated using that
-   Expand
-   source
-   Expand
-   source
    1.
    a.
    class' layout parameters. -->
@@ -181,11 +177,3 @@ often want for overlays atop a playing video. -->
         a.
     </FrameLayout>
 </com.vmn.android.player.view.VideoSurfaceView>
-
-
-<!--<?xml version="1.0" encoding="utf-8"?>-->
-<!--<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"-->
-    <!--android:orientation="vertical" android:layout_width="match_parent"-->
-    <!--android:layout_height="match_parent">-->
-
-<!--</LinearLayout>-->

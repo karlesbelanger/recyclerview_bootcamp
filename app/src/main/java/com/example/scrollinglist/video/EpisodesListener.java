@@ -1,4 +1,4 @@
-package com.example.scrollinglist;
+package com.example.scrollinglist.video;
 
 import com.example.scrollinglist.pojo.EpisodeResponse;
 
