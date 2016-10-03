@@ -4,10 +4,13 @@ package com.example.scrollinglist.tve;
  * Created by belangek on 9/27/16.
  */
 import android.support.v4.app.Fragment;
+import android.util.Log;
+
 import com.vmn.android.tveauthcomponent.error.TVEException;
 import com.vmn.android.tveauthcomponent.error.TVEMessage;
 import com.vmn.android.tveauthcomponent.model.TVESubscriber;
 public class DeferredCallbackImpl implements DeferredCallback {
+    private static final String TAG = DeferredCallbackImpl.class.getSimpleName();
     private int code;
     private TVEMessage message;
     private TVEException exception;
@@ -59,6 +62,7 @@ public class DeferredCallbackImpl implements DeferredCallback {
         switch (code) {
             case DeferredCallback.CODE_LOGIN:
                 listener.loginCompleted(subscriber);
+                Log.d(TAG, "onReceivedCallback: ");
                 break;
             case DeferredCallback.CODE_LOGOUT:
                 listener.logoutCompleted();

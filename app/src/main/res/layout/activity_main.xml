@@ -23,6 +23,10 @@
             app:layout_scrollFlags="scroll|enterAlways"
             app:title="Episodes"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        <android.support.v7.widget.ActionBarContainer
+            android:id="@+id/m_action_bar"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"></android.support.v7.widget.ActionBarContainer>
 
     </android.support.design.widget.AppBarLayout>
 </android.support.design.widget.CoordinatorLayout>

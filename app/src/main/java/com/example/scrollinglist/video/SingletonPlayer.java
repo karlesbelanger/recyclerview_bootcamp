@@ -57,8 +57,8 @@ public class SingletonPlayer {
     private final AndroidPlayerContext androidPlayerContext = new AndroidPlayerContext(
             MainApplication.getInstance(),
             "demoAdvertisingId");//,
-    //MainApplication.getInstance().getTveService().getAuthBridge(),
-    //MAX_BUFFER_SIZE_MEGS);
+//    MainApplication.getInstance().getTveService().getAuthBridge(),
+//    MAX_BUFFER_SIZE_MEGS);
 
     public AndroidPlayerContext getPlayerContext() { return androidPlayerContext; }
 

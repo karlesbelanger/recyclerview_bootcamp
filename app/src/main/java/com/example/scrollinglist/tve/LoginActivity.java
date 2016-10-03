@@ -32,7 +32,7 @@ public class LoginActivity extends AppCompatActivity implements TVEDelegate.TveE
         tve = TVEDelegate.getInstance();
         tve.subscribeEventListener(this);
         if(tve.isLoginFormAvailable()) {
-            loginFormPrepared(tve.getLoginForm());//last place used
+            loginFormPrepared(tve.getLoginForm());
         } else {
             TVEComponent.getInstance().login();
         }
@@ -94,7 +94,7 @@ public class LoginActivity extends AppCompatActivity implements TVEDelegate.TveE
         Toast.makeText(getApplicationContext(), "errorHappened:" + error.getCode() +
                 "\n" +
                 error.getMessage(), Toast.LENGTH_SHORT).show();
-        error.printStackTrace();
+        //error.printStackTrace();
     }
     @Override
     public void onDisplayMessage(TVEMessage message) {
